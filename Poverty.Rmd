@@ -1,0 +1,139 @@
+---
+title: "Poverty shinny app"
+output: flexdashboard::flex_dashboard
+runtime: shiny
+resource_files:
+- data/countrylist.rda
+- data/dd.rda
+---
+
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+pacman::p_load(shiny,flexdashboard,Lujain , gtsummary, tidyverse , WDI)
+data(faithful)
+```
+
+```{r,include=FALSE}
+outcome_ind <- dd %>% 
+  select(SI.POV.UMIC.GP) %>% 
+  names
+names(dd)
+```
+
+```{r, eval=FALSE}
+series_list <- h %>% 
+   select(-iso2c) %>% 
+  pivot_longer(cols=where(is.double) | contains(".")) %>% 
+  filter(!is.na(value))  %>% 
+  count(name) %>% 
+    arrange(-n) %>% 
+  slice(1:13) %>% 
+  select(name) %>% 
+  distinct %>% 
+  pull(name)
+series_list
+write_rds(series_list,'data-raw/series_list.rds')
+```
+
+```{r}
+series_list <- read_rds('data-raw/series_list.rds')
+```
+
+```{r,eval=FALSE}
+h <- 
+  dd %>% 
+  select(-iso2c) %>% 
+  inner_join(d, by = c('country','year'))
+write_rds(h,"data-raw/h.rds")
+```
+
+```{r}
+h <- read_rds("data-raw/h.rds")
+```
+
+
+```{r,eval=FALSE}
+countrylist <- 
+  dd %>% 
+  select(year, country, SI.POV.UMIC.GP,SL.UEM.NEET.MA.ZS) %>% 
+  na.omit() %>%
+  count(country) %>% 
+  arrange(-n) %>% 
+  pull(country) %>% 
+  as.list()
+names(countrylist) <- countrylist
+
+write_rds(countrylist,'data-raw/countrylist.rds')
+```
+
+```{r}
+countrylist <- read_rds('data-raw/countrylist.rds')
+```
+
+
+
+Column {.sidebar}
+-----------------------------------------------------------------------
+
+```{r}
+selectInput("country", label = "Countries", multiple = TRUE,
+            choices = countrylist, selected = countrylist[c(1,2)])
+
+sliderInput("year", label = "Years",
+            min = 2000, max = 2018, value = c(2000,2018), step = 1)
+```
+
+```{r}
+selectInput("x",label="Choose x-axis", choices= series_list, 
+            selected=series_list[[2]])
+```
+
+```{r}
+selectInput("y", label="Choose y-axis", choices=series_list,
+            selected= series_list[[1]])
+```
+
+
+Column {.tabset}
+-----------------------------------------------------------------------
+
+```{r,include=FALSE}
+renderPrint({
+  c(input$year[1],input$year[2])
+})
+```
+
+### Time Plot
+
+```{r, include=TRUE}
+renderPlot({
+  h %>% 
+  filter(country %in% input$country) %>% 
+  filter(between(year, input$year[1],input$year[2])) %>% 
+  mutate(country=factor(country), year=factor(year)) %>% 
+  ggplot(aes(x=year ,y=!!sym(input$y), fill=country, color=country)) +
+  geom_point( position = "dodge", stat = "summary", fun = mean)
+})
+```
+
+
+### Scatter Plot
+
+```{r, include=TRUE}
+renderPlot({
+  h %>% 
+  filter(country %in% input$country) %>% 
+  filter(between(year, input$year[1],input$year[2])) %>% 
+  mutate(country=factor(country), year=factor(year)) %>% 
+  ggplot(aes(x=!!sym(input$x) ,y=!!sym(input$y), fill=country, color=country)) +
+  geom_point( position = "dodge", stat = "summary", fun = mean)+
+    geom_smooth(method = "lm",formula  ='y ~ x')
+})
+
+```
+
+```{r,include=FALSE , eval=FALSE}
+library(rsconnect)
+rsconnect::deployApp('Poverty.Rmd')
+```
+

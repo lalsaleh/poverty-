@@ -1,0 +1,136 @@
+---
+title: "Poverty and Health Equity"
+author: "Lujain Alsaleh"
+output:
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(WDI, gtsummary, tidyverse,Lujain)
+```
+
+Course:  PBHL-B481/581
+
+## Primary Aim:
+
+Poverty and health equity is a major health topic. It is important for policy makers to make decisions based on data. My app will provide an interface to health and poverty data and analysis. Using this data might help them to find out what policy will work. 
+
+### Analysis work flow:
+
+The data will be taken from the World Data Bank (WDB). Using the R app `WDI` to download the data as the user requests it. 
+
+WDB has lots of data, but the app will present the user with a good selection of that data. This will save the user from having explore the thousands of series on the website. 
+
+The series can be categorized as follows (The user will choose from options in
+these categories):
+
+Outcome measure:
+Outcome measurements related to poverty or economic health such as GINI index.
+
+Intervention: 
+Measurements of government intervention or things can be modified by government policies such as Income share held by fourth 20%. For example, the democrats claim that they can improve this number. 
+
+Confounders:
+Variables that cannot be modified by government policies such as age distribution, or ethnic variety. These will be used to adjust measures of the association between interventions and outcomes.
+
+
+
+### Data
+
+
+The data will be downloaded from World Data Bank in real time.
+
+
+This website allows you to select data by series year and country.
+
+
+## Proof of Concept: 
+
+The dataset below is one example from Poverty and Equity. 
+This include GINI index and Income share held by fourth 20%.
+Other series can be selected as needed. 
+
+```{r}
+p <- read_csv("data-raw/76a73c18-13c7-4003-aa16-d497274f8db4_Data.csv")
+head(p)
+```
+
+There is also an `r` app called `WDI` that allows downloading data. 
+The search function below find series based on key words "Poverty" is an example. 
+```{r}
+r <- WDI::WDIsearch("poverty")
+r %>% head
+```
+Once the series has beed located the WDI app can be used to download the data as shown below:
+
+```{r}
+#d <- WDI::WDI(indicator= c("SI.POV.GINI" , "SI.DST.04TH.20") )
+d %>% 
+  na.omit() %>% 
+head()
+```
+Here the user will be able to filter the data by country and create a long version of the data set.
+Both wide and long version are useful for different types of analysis. Here we demonstrate how to change from wide to long format.
+
+```{r}
+dd <- d %>% 
+  filter(country %in% c("United States", "China" , "Sweden")) %>% 
+  na.omit() %>% 
+  pivot_longer(col = c('SI.POV.GINI','SI.DST.04TH.20'),
+               names_to = "series",
+               values_to = "measure") 
+dd %>%   head
+```
+```{r}
+d %>% na.omit %>% arrange(year) %>% head
+```
+
+
+Save data tables to the package if needed.
+
+```{r}
+#usethis::use_data(dd,overwrite = TRUE)
+#usethis::use_data(d,overwrite = TRUE)
+```
+Users will be able to select graphs to be used to visualize associations.
+
+```{r}
+dd %>% 
+  ggplot(aes(x=year , y=measure , color=series))+
+  geom_point()+
+  facet_wrap(~country)
+```
+
+In addition to plots, users can select tables to be produce summaries using gtsummary or flextable. 
+
+```{r}
+dd %>% 
+  filter(series == "SI.DST.04TH.20") %>% 
+  select(country,measure) %>% 
+  tbl_summary(by='country',statistic = list(measure~"{mean} ({sd})")) %>% 
+  add_p()
+
+```
+
+In addition, statistical models will also be available. 
+
+## Challanges: 
+
+1. Finding good data series from WDB website. 
+2. Identifying which series are outcomes, predictors, intervention and Confounders.
+3. Select some good modeling technique.
+4. Learn Rshiny. 
+5. Learn how to deploy Rshiny. 
+
+
+## To do:
+
+1. Find other data series. (10/15/2020)
+2. Develop a set of a data exploration summaries and graphs for the user to choose from. (10/22/2020)
+3. Develop a selection of statistical models. (10/29/2020)
+4. Program interface between Rshiny and WDB. (11/05/2020)
+5. Develop a shiny user interface.(11/10/2020)
+6. Develop the shiny server code. (11/18/2020)
+7. Deploy the shiny app. (11/19/2020)
+

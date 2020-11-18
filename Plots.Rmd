@@ -1,0 +1,29 @@
+---
+title: "Plots"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(Lujain , gtsummary, tidyverse , WDI)
+```
+
+```{r}
+countrylist <- dd %>% 
+  select(country) %>% 
+  distinct() %>% 
+  arrange() %>% 
+  pull(country)
+countrylist
+```
+
+```{r}
+dd %>% 
+  filter(country %in% countrylist[c(3,12)]) %>% 
+  filter(between(year,2000,2014)) %>% 
+  mutate(country=factor(country), year=factor(year)) %>% 
+  ggplot(aes(x=year ,y=`3.0.Gini`, fill=country, color=country)) +
+  geom_point( position = "dodge", stat = "summary", fun = mean)
+
+```
+

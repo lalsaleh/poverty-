@@ -1,0 +1,94 @@
+---
+title: "Find data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(Lujain , gtsummary, tidyverse , WDI)
+```
+
+
+```{r}
+r <- WDI::WDIsearch("Income share")
+r
+```
+
+```{r}
+r <- WDI::WDIsearch("Gini")
+r
+```
+```{r}
+indexes <- c("3.0.Gini", "3.1.Gini","3.2.Gini", "3.0.IncShr.q1", "SI.DST.FRST.20")
+```
+
+```{r}
+d <- WDI::WDI(indicator= indexes)
+d %>% 
+  select(iso2c, country, year, `3.0.IncShr.q1`,`SI.DST.FRST.20`) %>% 
+  na.omit %>% 
+  head
+```
+
+```{r}
+o <- d %>% 
+  select(country , year, `3.0.Gini`) %>% 
+  group_by(country, year) %>% 
+  summarise(`3.0.Gini`= mean(`3.0.Gini`, na.rm = TRUE), n=n()) %>% 
+  ungroup %>% 
+  na.omit
+o
+```
+```{r}
+p <- d %>% 
+  select(country , year, `SI.DST.FRST.20`) %>% 
+  group_by(country, year) %>% 
+  summarise(`SI.DST.FRST.20`= mean(`SI.DST.FRST.20`, na.rm = TRUE), n=n()) %>% 
+  ungroup %>% 
+  na.omit
+p
+```
+
+```{r}
+names(d)
+```
+
+```{r}
+d %>% 
+  select(iso2c, country, year, `3.0.Gini`) %>% 
+  arrange(iso2c) %>% 
+  na.omit 
+```
+```{r}
+dd<- o %>% 
+  inner_join(p,by=c("country", "year")) %>% 
+  select(-n.x, -n.y)
+dd
+```
+```{r}
+countrylist <- dd %>% 
+  select(country) %>% 
+  distinct() %>% 
+  arrange() %>% 
+  pull(country)
+countrylist 
+usethis::use_data(countrylist, overwrite = TRUE)
+```
+
+
+```{r}
+usethis::use_data(dd, overwrite = TRUE)
+```
+
+
+```{r}
+d %>% 
+  select(iso2c, country, year, `SI.DST.FRST.20`) %>% 
+  arrange(iso2c) %>% 
+  na.omit 
+```
+```{r}
+gtsummary::tbl_summary(d)
+```
+
+

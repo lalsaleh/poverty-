@@ -1,0 +1,20 @@
+---
+title: "To_Do"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## To do:
+
+1. Find data series. (10/15/2020)
+2. Develop a set of a data exploration summaries and graphs for the user to choose from. (10/22/2020)
+3. Develop a selection of statistical models. (10/29/2020)
+4. Program interface between Rshiny and WDB. (11/05/2020)
+5. Develop a shiny user interface.(11/10/2020)
+6. Develop the shiny server code. (11/18/2020)
+7. Deploy the shiny app. (11/19/2020)
+

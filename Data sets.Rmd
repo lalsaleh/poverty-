@@ -1,0 +1,319 @@
+---
+title: "Data sets"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+pacman::p_load(tidyverse, janitor, Lujain)
+```
+
+## Selected Indicators
+
+
+```{r}
+indicators <- c("REER","BM.GSR.MRCH.CD","BM.GSR.INSF.ZS","SI.POV.UMIC.NO",
+                "UIS.EA.1.AG25T99","UIS.EA.1.AG25T99.F","UIS.EA.1.AG25T99.F","UIS.EA.1.AG25T99.M","3.0.Gini","SI.POV.GINI" , "SI.DST.04TH.20")
+
+predictor_ind <- c("SH.UHC.SRVS.CV.XD","SL.UEM.NEET.FE.ZS","SL.UEM.NEET.MA.ZS",
+  "SL.UEM.NEET.ZS")
+outcome_ind <- c("SI.POV.MDIM.HH","SI.POV.UMIC.GP")
+
+usethis::use_data(predictor_ind, outcome_ind)
+```
+
+
+
+
+```{r}
+dd <- WDI::WDI(indicator = c(predictor_ind, outcome_ind) )
+usethis::use_data(dd,overwrite = TRUE)
+```
+
+```{r}
+d %>% 
+  #filter(!is.na(REER)) %>% 
+  filter(!is.na(BM.GSR.MRCH.CD)) %>% 
+  head
+```
+
+
+
+```{r}
+d <- readxl::read_xlsx("data-raw/Poverty2.xlsx") %>% 
+  janitor::clean_names()
+d %>% 
+  na.omit() %>%
+  filter(x1974_yr1974 != "..") 
+```
+
+```{r}
+dd <-d %>% 
+  filter(x1974_yr1974 != "..") 
+```
+
+```{r}
+Pdataset 
+```
+```{r}
+p_ind <- WDI::WDIsearch(string = "Poverty and Equity",field =  'sourceDatabase')
+```
+
+```{r}
+
+d <- WDI::WDI(country= countries,start = 2000, end = 2017,indicator = )
+```
+
+```{r}
+find_data <- function(indicator){
+  countries <- c('ARG','BGD','CHN','CMR')
+  d <- WDI::WDI(country= countries,start = 2000, end = 2017,indicator =  indicator) 
+  if (!is.null(d)) {
+    dd <- 
+      d
+      filter(!is.na(!!rlang::sym(indicator))) %>% 
+      summarize(n = n(), indicator = indicator)
+      return(dd)
+  }
+  
+ 
+}
+
+
+
+#d1 <- map_df(p_ind[1], find_data)
+
+
+  
+```
+
+
+```{r}
+
+d <- WDI::WDI(country= countries,start = 2000, end = 2017,indicator = )
+```
+
+```{r}
+# Current version
+
+countries <- c('Uruguay','Bolivia','Brazil','Chile','Colombia','Costa Rica', 'Dominican Republic', 'Ecuador', 'El Salvador', 'Guatemala','Mexico', 'Nicaragua', 'Peru','Paraguay')
+
+find_data <- function(indicator, contries = contries){
+
+    dd <- WDI::WDI(country= countries,
+                start = 2000,
+                end = 2014,
+                indicator =  indicator) 
+    if (!plyr::empty(dd)){
+        d <- dd %>% 
+          filter(!is.na(!!rlang::sym(indicator))) %>% 
+         summarize(n = n(), indicator = indicator)
+         return(d)
+    } 
+    else(
+      return(tibble(n = 0 , indicator = indicator))
+    )
+ 
+
+  
+  
+ 
+}
+
+
+
+  
+```
+
+```{r,eval=FALSE}
+p_ind <- WDI::WDIsearch(string = "Poverty and Equity",field =  'sourceDatabase')
+
+poverty_index <- map_df(p_ind, find_data)
+
+poverty_index
+
+usethis::use_data(poverty_index, overwrite = TRUE)
+```
+
+```{r,eval=FALSE}
+ed_ind <- WDI::WDIsearch(string = "Education Statistics",field =  'sourceDatabase',short = FALSE) %>% 
+  as_tibble()
+
+
+ed_ind %>% 
+  filter(str_detect(name, "25\\+")) %>% 
+  filter(str_detect(description,"UNESCO")) %>% 
+  knitr::kable()
+```
+
+```{r}
+ed_index <- map_df(ed_ind, find_data)
+
+ed_index %>% 
+  filter(n > 5)
+
+usethis::use_data(ed_index, overwrite = TRUE)
+```
+
+```{r,eval=FALSE}
+p_ind <- WDI::WDIsearch(string = "Poverty and Equity",field =  'sourceDatabase', short = FALSE) %>% 
+  as_tibble()
+
+p_ind %>% pull(indicator)
+poverty_index <- map_df(p_ind %>% pull(indicator), find_data)
+
+poverty_index %>% 
+  filter(n>20) %>% 
+  knitr::kable()
+```
+```{r}
+pov_1 <-WDI::WDIsearch(string = "SI.POV.UMIC.NO",field =  'indicator', short = FALSE)
+pov_1
+```
+
+
+
+```{r}
+
+ed_ind <- WDI::WDIsearch(string = poverty_index %>% 
+  filter(n>20) %>% pull(indicator),field =  'indicator')
+
+
+
+usethis::use_data(poverty_index, overwrite = TRUE)
+```
+
+
+```{r,eval=FALSE}
+wd_ind <- WDI::WDIsearch(string = "world.*development",field =  'sourceDatabase', 
+                         short = FALSE) %>% 
+  as_tibble
+
+ind <- wd_ind %>%
+  filter(!str_detect(sourceOrganization, regex("Agriculture|Fertilizer|Land", ignore_case=TRUE ))) 
+
+ind %>% 
+  slice(1:10) %>% 
+  knitr::kable()
+
+```
+
+
+```{r}
+wd_index <- map_df(wd_ind %>%slice(1:10) %>%  pull(indicator) , find_data)
+
+wd_index %>% 
+  arrange(-n) %>% 
+  filter(n >= .5 * max(n)) %>% 
+  filter(n > 50)
+
+usethis::use_data(wd_index, overwrite = TRUE)
+```
+
+```{r,eval=FALSE}
+j_ind <- WDI::WDIsearch(string = "Jobs",field =  'sourceDatabase',short = FALSE) 
+
+j_ind
+
+jobs_index <- map_df(j_ind  %>%  pull(indicator), find_data)
+
+jobs_index
+
+usethis::use_data(j_index, overwrite = TRUE)
+```
+
+```{r,eval=FALSE}
+e_ind <- WDI::WDIsearch(string = "Global.*Economic",field =  'sourceDatabase',short = FALSE) %>% 
+  as_tibble
+
+
+economic_index <- map_df(e_ind %>% pull(indicator), find_data)
+
+economic_index %>% 
+  inner_join(e_ind, by = "indicator") %>% 
+  arrange(-n) %>% 
+ filter(n >= .7 * max(n)) %>% 
+  knitr::kable()
+
+
+
+
+usethis::use_data(e_index, overwrite = TRUE)
+```
+
+```{r,eval=FALSE}
+h_ind <- WDI::WDIsearch(string = "Health.*equity",field =  'sourceDatabase', short = FALSE)
+
+h_ind %>% 
+  knitr::kable()
+
+```
+
+```{r}
+health_index <- map_df(h_ind, find_data)
+
+health_index
+
+usethis::use_data(h_index, overwrite = TRUE)
+```
+
+```{r,eval=FALSE}
+f_ind <- WDI::WDIsearch(string = "Global Financial Inclusion",field =  'sourceDatabase')
+
+Financial_index <- map_df(f_ind, find_data)
+
+Financial_index
+
+usethis::use_data(f_index, overwrite = TRUE)
+```
+
+```{r,eval=FALSE}
+fd_ind <- WDI::WDIsearch(string = "Global Financial Development",field =  'sourceDatabase')
+
+fd_ind
+```
+
+
+```{r}
+p_ind <- WDI::WDIsearch(string = "Policy",
+                        field = 'sourceDatabase',short = FALSE) %>% 
+  as_tibble
+p_ind %>% 
+  filter(!str_detect(sourceDatabase,"Indonesia ")) %>% 
+  knitr::kable()
+
+
+
+countrypolicy_index <- map_df(p_ind, find_data)
+
+countrypolicy_index
+
+usethis::use_data(cp_index, overwrite = TRUE)
+```
+
+```{r}
+x <- WDI::WDI(indicator = "B2iii")
+x %>% 
+  filter(!is.na(B2iii)) %>% 
+  count(country)
+
+```
+
+```{r}
+x <- WDI::WDI(indicator = "B2iii")
+x %>% 
+  filter(!is.na(B2iii)) %>% 
+  count(year)
+
+```
+```{r}
+countries <- c('Uruguay','Bolivia','Brazil','Chile','Colombia','Costa Rica', 'Dominican Republic', 'Ecuador', 'El Salvador', 'Guatemala','Mexico', 'Nicaragua', 'Peru','Paraguay')
+
+length(countries)
+```
+
+
+
+
+
+
