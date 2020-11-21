@@ -1,0 +1,20 @@
+---
+title: "Poverty shinny app"
+output: html
+resource_files:
+- data/countrylist.rda
+- data/dd.rda
+---
+
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+library(shiny)
+library(miniUI)
+library(tidyverse)
+library(Lujain)
+```
+
+```{r}
+h %>% poverty()
+```
+

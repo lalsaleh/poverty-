@@ -9,31 +9,14 @@ resource_files:
 
 ```{r global, include=FALSE}
 # load data in 'global' chunk so it can be shared by all users of the dashboard
-pacman::p_load(shiny,flexdashboard,Lujain , gtsummary, tidyverse , WDI)
-data(faithful)
+library(shiny)
+library(flexdashboard)
+library(tidyverse)
 ```
 
-```{r,include=FALSE}
-outcome_ind <- dd %>% 
-  select(SI.POV.UMIC.GP) %>% 
-  names
-names(dd)
-```
 
-```{r, eval=FALSE}
-series_list <- h %>% 
-   select(-iso2c) %>% 
-  pivot_longer(cols=where(is.double) | contains(".")) %>% 
-  filter(!is.na(value))  %>% 
-  count(name) %>% 
-    arrange(-n) %>% 
-  slice(1:13) %>% 
-  select(name) %>% 
-  distinct %>% 
-  pull(name)
-series_list
-write_rds(series_list,'data-raw/series_list.rds')
-```
+
+
 
 ```{r}
 series_list <- read_rds('data-raw/series_list.rds')

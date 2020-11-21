@@ -92,3 +92,28 @@ gtsummary::tbl_summary(d)
 ```
 
 
+```{r, eval=FALSE}
+series_list <- h %>% 
+   select(-iso2c) %>% 
+  pivot_longer(cols=where(is.double) | contains(".")) %>% 
+  filter(!is.na(value))  %>% 
+  count(name) %>% 
+    arrange(-n) %>% 
+  slice(1:13) %>% 
+  select(name) %>% 
+  distinct %>% 
+  pull(name)
+series_list
+write_rds(series_list,'data-raw/series_list.rds')
+```
+
+```{r,include=FALSE}
+outcome_ind <- dd %>% 
+  select(SI.POV.UMIC.GP) %>% 
+  names
+names(dd)
+```
+```{r}
+remotes::install_github("https://github.com/lalsaleh/poverty-")
+```
+
