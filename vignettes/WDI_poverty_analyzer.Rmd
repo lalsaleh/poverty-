@@ -16,38 +16,32 @@ library(Lujain)
 library(dplyr)
 ```
 
-## Use *World Data Institute* (WDI) Data to Explore Poverty
+The relation between poverty and health is one of the main topics in public health. Poverty leads to increased health issues. Living in a place that does not provide people with education, clean water, eating healthy food, working in some dangerous environments..etc could increase many health risks. 
+In this project, people who are interested in public health find it important to make policy policy based on data. My app will provide an interface to health and poverty data and analysis. Using this data might help them to find out what policy will work.
 
-### Primary Aim:
-
-Poverty and health equity is a major health topic. It is important for policy makers to make decisions based on data. My app will provide an interface to health and poverty data and analysis. Using this data might help them to find out what policy will work.
-
-
-### Concept
-
-The data is be taken from the World Data Bank (WDB). Using the R app `WDI` to download the data as the user requests it. 
-
-WDB has lots of data, but the app presents the user with a good selection of that data. This saves the user from having explore the thousands of series on the website. 
-
-The series can be categorized as follows (The user will choose from options in
-these categories):
-
-**Outcome measure:**
-
-Outcome measurements related to poverty or economic health such as GINI index.
-
-**Intervention:** 
-
-Measurements of government intervention or things can be modified by government policies such as Income share held by fourth 20%. For example, the democrats claim that they can improve this number. 
-
-**Confounders:**
-
-Variables that cannot be modified by government policies such as age distribution, or ethnic variety. These will be used to adjust measures of the association between interventions and outcomes.
+The data here is taken from the World Data Bank (WDB). Using the R app `WDI` to download the data as the user requests it (Future work). WDB has lots of data, but the app presents the user with a good selection of that data. This saves the user from having to explore the thousands of series on the website. 
 
 ### The Data
 
-The main data set is called `h`.  This contains selected series from the WDI website. 
-One of the difficulties is finding series that have data.
+The main data set is called `h`,which refers to health equity. This contains selected series from the WDI website. Some series contain poverty indicators and other series contain indicators managed by the authorities to fight poverty and health equity.
+One of the difficulties is finding series that have data. The World Data Bank does not have a useful series because most of the series do not have values, so it took a long time to find some series that can work. 
+
+
+## Challenges: 
+
+The main challenge is to identify good series on the WDI website. This is because most of the series do not have data and they might not be relevant to the topic poverty and health equity.
+The user wants to see the association between series and the scatter plot shows a visual representation of the association between two series. 
+The user wants to see how series change over time. The time series plot shows the relation of the series to time. 
+The main idea is the ability to identify the policy interventions that can change health outcomes. The gadget accomplishes a step in this direction. Future development is still needed.  
+
+## Future Work and Plans
+
+-If the user was interested in a country which has a sharp increase/decrease in certain year/s, they can look up what happened to this country in that year.Thus, more analysis is needed in this app. 
+-Add the ability of the user to directly query the WDI website to give them more data. 
+-Enhance the graphical representation and  analysis methods offered by the app. 
+ 
+
+
 
 ```{r}
 h %>% 
@@ -55,10 +49,11 @@ h %>%
   head %>% knitr::kable()
 ```
 
-### The shiny gadget: 
 
-It takes dataset called h and produces a shiny interface.
-The gadget asks the user for four inputs. They are the countries, series for the time plot and series for the scatter plot. 
+### The gadget: 
+
+In order to provide the user with the analysis they need, the gadget takes the dataset `h` and produces a shiny gadget interface. The gadget asks the user for four inputs. They are the countries, the year, and two series for the time plot and the scatter plot. Then, the user can pick the country/countries they are interested in to find the relation between the indicators. 
+
 
 ### How to use the gadget: 
 
