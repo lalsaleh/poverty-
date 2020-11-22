@@ -1,5 +1,5 @@
 ---
-title: "WDI_poverty_analyzer"
+title: "WDI poverty analyzer"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{WDI_poverty_analyzer}
@@ -17,28 +17,39 @@ library(dplyr)
 ```
 
 The relation between poverty and health is one of the main topics in public health. Poverty leads to increased health issues. Living in a place that does not provide people with education, clean water, eating healthy food, working in some dangerous environments..etc could increase many health risks. 
-In this project, people who are interested in public health find it important to make policy policy based on data. My app will provide an interface to health and poverty data and analysis. Using this data might help them to find out what policy will work.
+In this project, people who are interested in public health find it important to make policy based on data. My app will provide an interface to health and poverty data and analysis. Using this data might help them to find out what policy will work.
 
 The data here is taken from the World Data Bank (WDB). Using the R app `WDI` to download the data as the user requests it (Future work). WDB has lots of data, but the app presents the user with a good selection of that data. This saves the user from having to explore the thousands of series on the website. 
 
 ### The Data
 
-The main data set is called `h`,which refers to health equity. This contains selected series from the WDI website. Some series contain poverty indicators and other series contain indicators managed by the authorities to fight poverty and health equity.
-One of the difficulties is finding series that have data. The World Data Bank does not have a useful series because most of the series do not have values, so it took a long time to find some series that can work. 
+The main data set is called `h`,which refers to health equity. This contains selected series from the WDI website. Some series contain poverty indicators and other series contain indicators managed by the authorities to fight poverty and insure the health equity.
+One of the difficulties is finding series that have data. The World Data Bank does not have a useful series because most of the series do not have data, so it took a long time to find some series that can work. 
 
 
 ## Challenges: 
 
-The main challenge is to identify good series on the WDI website. This is because most of the series do not have data and they might not be relevant to the topic poverty and health equity.
-The user wants to see the association between series and the scatter plot shows a visual representation of the association between two series. 
-The user wants to see how series change over time. The time series plot shows the relation of the series to time. 
-The main idea is the ability to identify the policy interventions that can change health outcomes. The gadget accomplishes a step in this direction. Future development is still needed.  
+1. The main challenge is to identify good series on the WDI website. This is because most of the series
+  do not have data and they might not be relevant to the topic poverty and health equity.
+2. Learn the gadget. However, the good news that it is similar to R shiny with some minor changes (use
+    miniUI). 
+3. The main idea is the ability to identify the policy interventions that can change health outcomes.
+   The gadget accomplishes a step in this direction, so future development is still needed.
+
+## Challenges for the user:
+
+1. The user wants to see the association between series and the scatter plot shows a visual     
+    representation of the association between two series. More analysis is needed. 
+2. The user wants to see how series change over time. The time series plot shows the relation of the
+   series to time. However, other events could be correlated with the country in certain years. 
+   Therefore, the user should analyze more information. 
+  
 
 ## Future Work and Plans
 
--If the user was interested in a country which has a sharp increase/decrease in certain year/s, they can look up what happened to this country in that year.Thus, more analysis is needed in this app. 
--Add the ability of the user to directly query the WDI website to give them more data. 
--Enhance the graphical representation and  analysis methods offered by the app. 
+1. If the user was interested in a country which has a sharp increase/decrease in certain year/s, they    can look up what happened to this country in that year.Thus, more analysis is needed in this app. 
+2. Add the ability of the user to directly query the WDI website to give them more data. 
+3. Enhance the graphical representation and  analysis methods offered by the app. 
  
 
 
